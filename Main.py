@@ -3,6 +3,8 @@ import numpy as np
 import face_recognition
 import os
 from datetime import datetime
+import time
+from playsound import playsound
 
 path = 'ImageAttendance'
 images = []
@@ -39,6 +41,7 @@ def markAttendance(name):
       now = datetime.now()
       dateString = now.strftime('%H:%M:%S')
       f.writelines(f'\n{name}, {dateString}') # kalo tidak ada, masukkan namanya
+      return False
 
 
 encodeListKnown = findEncodings(images)
@@ -75,7 +78,11 @@ while True:
       cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 255), 2)
       cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 255), cv2.FILLED)
       cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
-      markAttendance(name)
+      isEverAttended = markAttendance(name)
+      if (isEverAttended == False):
+        playsound('1.wav')
+        cv2.putText(img, 'Attended!', (30, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 2)
+        playsound('2.wav')
 
 
   cv2.imshow('Webcam', img)
